@@ -62,5 +62,39 @@
 			})
 		});
 	</script>
+	<script>
+  // Hàm gửi kết quả lên Google Sheets
+  function sendQuizResult(name, email, score, quizTitle) {
+    fetch("https://script.google.com/macros/s/AKfycbxd2AmJi8qL0FdrUlYKJakwfYjvKsqhxUol9kGted_s4iDTarvGMz0ZeIZh9myqV1LnBA/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        score: score,
+        quizTitle: quizTitle
+      })
+    })
+    .then(response => response.text())
+    .then(result => console.log("Đã gửi điểm: " + result))
+    .catch(error => console.error("Lỗi khi gửi điểm:", error));
+  }
+
+  // Đợi đến khi quiz load xong
+  window.addEventListener("message", function(event) {
+    if (event.data && typeof event.data === "object" && event.data.type === "quiz_completed") {
+      // Ví dụ giả định dữ liệu kết quả:
+      const name = "Người dùng demo";
+      const email = "demo@example.com";
+      const score = event.data.score || 100; // hoặc event.data.percent
+      const quizTitle = "Bài kiểm tra iSpring";
+
+      sendQuizResult(name, email, score, quizTitle);
+    }
+  });
+</script>
+
 </body>
 </html>
